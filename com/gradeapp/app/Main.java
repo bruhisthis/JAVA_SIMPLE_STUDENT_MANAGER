@@ -14,14 +14,11 @@ public class Main {
         logger.info("Grade Management System starting...");
          
         try {
-            // Initialize DAOs
             StudentDAO studentDAO = new StudentDAOImpl();
             GradeDAO gradeDAO = new GradeDAOImpl();
             
-            // Initialize Service
             GradeService gradeService = new GradeService(gradeDAO, studentDAO);
             
-            // Start menu system
             GradeAppMenu menu = new GradeAppMenu(studentDAO, gradeDAO, gradeService);
             
             System.out.println("╔════════════════════════════════════════════╗");

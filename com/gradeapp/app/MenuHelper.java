@@ -12,7 +12,6 @@ public class MenuHelper {
         this.scanner = scanner;
     }
      
-    // Read integer with validation
     public Integer readInt(String prompt) {
         while (true) {
             try {
@@ -29,7 +28,6 @@ public class MenuHelper {
         }
     }
     
-    // Read double with validation
     public Double readDouble(String prompt) {
         while (true) {
             try {
@@ -51,7 +49,6 @@ public class MenuHelper {
         }
     }
     
-    // Read string with validation
     public String readString(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -64,7 +61,6 @@ public class MenuHelper {
         }
     }
     
-    // Read email with validation
     public String readEmail(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -80,8 +76,6 @@ public class MenuHelper {
             return input;
         }
     }
-    
-    // Read date (optional)
     public LocalDateTime readDate(String prompt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         
@@ -101,20 +95,17 @@ public class MenuHelper {
         }
     }
     
-    // Confirm action
     public boolean confirm(String message) {
         System.out.print(message + " (y/n): ");
         String input = scanner.nextLine().trim().toLowerCase();
         return input.equals("y") || input.equals("yes");
     }
     
-    // Pause
     public void pause() {
         System.out.print("\nPress Enter to continue...");
         scanner.nextLine();
     }
-    
-    // Clear screen (works on most terminals)
+
     public void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();

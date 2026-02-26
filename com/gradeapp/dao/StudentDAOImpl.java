@@ -21,13 +21,6 @@ import com.gradeapp.util.DBConnection;
 
 public class StudentDAOImpl implements StudentDAO {
     private static final Logger logger = AppLogger.getLogger(StudentDAOImpl.class);
-    /*private boolean inputValidator(String data, Integer id, InvalidInputException.InputType type) {
-    if (id == null || id <= 0) return false;
-    if (data == null || data.isBlank()) return false;
-    if (type == InvalidInputException.InputType.EMAIL && !data.contains("@gmail.com")) return false;
-    return true;
-    } */
-   //my version is down here
     private Boolean inputValidator(String email,Integer id,INPUTYPE type){ 
 
         boolean idvalidation = (id == null || id <=0)?true:false;
@@ -77,7 +70,6 @@ public class StudentDAOImpl implements StudentDAO {
                 throw new DAOException("insertion failed error", e);
             }
     }
-    //i can create privet method as update fiedl and then pass the type and inseerted dircelty with prepared statment
     @Override
     public void updateStudentEmail(Integer id, String email) throws DAOException, BaseExceptionApp {
         String sql ="UPDATE students SET email = ? WHERE id = ?";

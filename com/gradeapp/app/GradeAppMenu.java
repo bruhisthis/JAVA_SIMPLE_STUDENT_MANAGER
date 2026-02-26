@@ -67,8 +67,6 @@ public class GradeAppMenu {
         System.out.println("╚════════════════════════════════════════╝");
     }
     
-    // ========== STUDENT MANAGEMENT ==========
-    
     private void studentManagementMenu() throws Exception {
         System.out.println("\n┌──────────────────────────────┐");
         System.out.println("│   👤 STUDENT MANAGEMENT      │");
@@ -202,7 +200,6 @@ public class GradeAppMenu {
         
         Integer id = helper.readInt("Student ID: ");
         
-        // Show student details first
         Optional<Student> student = studentDAO.findStudentById(id);
         if (student.isEmpty()) {
             System.out.println("❌ Student not found!");
@@ -223,8 +220,6 @@ public class GradeAppMenu {
         
         helper.pause();
     }
-    
-    // ========== GRADE MANAGEMENT ==========
     
     private void gradeManagementMenu() throws Exception {
         System.out.println("\n┌──────────────────────────────┐");
@@ -259,7 +254,6 @@ public class GradeAppMenu {
         
         Integer studentId = helper.readInt("Student ID: ");
         
-        // Check if student exists
         Optional<Student> student = studentDAO.findStudentById(studentId);
         if (student.isEmpty()) {
             System.out.println("❌ Student not found!");
@@ -342,7 +336,6 @@ public class GradeAppMenu {
                 );
             }
             
-            // Calculate average
             Double average = gradeService.calculateAverageScore(studentId);
             System.out.println("\n📊 Average Score: " + String.format("%.2f", average));
         }
@@ -367,7 +360,6 @@ public class GradeAppMenu {
                 System.out.printf("%-12d %-8.2f%n", g.getStudentId(), g.getScore());
             }
             
-            // Calculate subject average
             Double average = gradeService.calculateSubjectAverage(subject);
             System.out.println("\n📊 Subject Average: " + String.format("%.2f", average));
         }
@@ -407,8 +399,6 @@ public class GradeAppMenu {
         
         helper.pause();
     }
-    
-    // ========== ANALYTICS MENU ==========
     
     private void analyticsMenu() throws Exception {
         System.out.println("\n┌────────────────────────────────────┐");
@@ -455,7 +445,6 @@ public class GradeAppMenu {
         System.out.println("\nStudent: " + student.get().getName());
         System.out.println("Average Score: " + String.format("%.2f", average));
         
-        // Show grade breakdown
         Optional<Double> highest = gradeService.getHighestscore(studentId);
         Optional<Double> lowest = gradeService.getLowestscore(studentId);
         long gradeCount = gradeService.contGradesstudent(studentId);
@@ -591,8 +580,6 @@ public class GradeAppMenu {
         helper.pause();
     }
     
-    // ========== BULK OPERATIONS ==========
-    
     private void bulkOperationsMenu() throws Exception {
         System.out.println("\n┌──────────────────────────────┐");
         System.out.println("│   🔄 BULK OPERATIONS         │");
@@ -617,8 +604,7 @@ public class GradeAppMenu {
         System.out.println("   Original student keeps their grades.\n");
         
         Integer fromStudentId = helper.readInt("From Student ID: ");
-        
-        // Check source student exists
+
         Optional<Student> fromStudent = studentDAO.findStudentById(fromStudentId);
         if (fromStudent.isEmpty()) {
             System.out.println("❌ Source student not found!");
@@ -628,7 +614,6 @@ public class GradeAppMenu {
         
         System.out.println("From: " + fromStudent.get().getName());
         
-        // Show how many grades will be transferred
         List<Grade> grades = gradeDAO.findStudentListGradeById(fromStudentId);
         System.out.println("Grades to transfer: " + grades.size());
         
@@ -640,7 +625,6 @@ public class GradeAppMenu {
         
         Integer toStudentId = helper.readInt("To Student ID: ");
         
-        // Check target student exists
         Optional<Student> toStudent = studentDAO.findStudentById(toStudentId);
         if (toStudent.isEmpty()) {
             System.out.println("❌ Target student not found!");

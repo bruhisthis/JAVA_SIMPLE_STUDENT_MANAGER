@@ -29,8 +29,6 @@ public class GradeService {
         studentDAO = s;
     }
 
-    //===========Individual Student Analytics)================================================
-
     public Double calculateAverageScore(Integer idStudent)throws DAOException,BaseExceptionApp{
         Student s = studentDAO.findStudentById(idStudent).orElseThrow(()->new StudentNotFoundException(idStudent, null));
         List<Grade> list = gradeDAO.findStudentListGradeById(idStudent);
@@ -66,12 +64,10 @@ public class GradeService {
             List<Grade> list = gradeDAO.findStudentListGradeById(idstudent);
             
             long gradeNumbers = list.size();
-            //long gradeNumbers = list.stream().mapToLong(e->1L).sum();//or .count
             logger.info("student id: "+s.getId()+" name: "+s.getName()+" was found,with "+gradeNumbers+" grades number");
             return gradeNumbers;
         }
         
-        //===================Across All Students==============================================
         public Double calculateSubjectAverage(String subject)throws DAOException,BaseExceptionApp{
             List<Grade> list = gradeDAO.findGradesBySubject(subject);
             double avrg = list.stream().mapToDouble(Grade::getScore).average().orElse(0.0);
@@ -103,7 +99,6 @@ public class GradeService {
             list.forEach(x->logger.info("subject: "+x));
             return list;
         }
-        //===========================Comparison Analytics===========================================
         public List<Student> getTopStudents(Integer limit)throws DAOException,BaseExceptionApp{
             if (limit == null|| limit <=0) {
                 throw new InvalidInputException("invalid input",null,limit,null,null);
@@ -118,15 +113,10 @@ public class GradeService {
                 logger.info("no grades found");
                 return new ArrayList<>();
             }
-            /* 
-            Map<Integer,Double> tempMap = listgGrades.stream().collect(Collectors.groupingBy(Grade::getStudentId,Collectors.averagingDouble(Grade::getScore)));
-            List<Integer> idlist = tempMap.entrySet().stream().sorted(Map.Entry.<Integer,Double>comparingByValue().reversed()).limit(limit).map(x->x.getKey()).toList();
-            Map<Integer,Student> mapstudent = listStudents.stream().collect(Collectors.toMap(Student::getId, s->s));
-            List<Student> tmList = idlist.stream().map(mapstudent::get).filter(Objects::nonNull).toList();//i dont know how to hadnle these place using stream api*/
+
              Map<Integer, Student> studentMap = listStudents.stream()
             .collect(Collectors.toMap(Student::getId, student -> student));
 
-            // Calculate averages and get top students in one stream
             List<Student> topStudents = listgGrades.stream()
             .collect(Collectors.groupingBy(
                 Grade::getStudentId,
@@ -143,9 +133,6 @@ public class GradeService {
         public List<Student> getStudentsWithNoGrades() throws DAOException,BaseExceptionApp{
             List<Grade> listGrades = gradeDAO.findAllGrade();
             List<Student> listsStudents = studentDAO.findAllStudent();
-            /* Map<Integer,Student> mapOfAllStudent = listsStudents.stream().collect(Collectors.groupingBy(Student::getId,s->s));
-            List<Integer> listofStudentWithGrade = listGrades.stream().collect(Collectors.groupingBy(Grade::getStudentId,Collectors.counting())).entrySet().stream().map(x->x.getKey()).filter(x -> x ==0).toList();
-            List<Student> studentwithougarde = listGrades.stream().filter(x->mapOfAllStudent.get(x)==0).;*/
             Set<Integer> ids = listGrades.stream().map(Grade::getStudentId).collect(Collectors.toSet());
             List<Student> studentsNoGrade = listsStudents.stream().filter(s->!ids.contains(s.getId())).toList();
             logger.info("found student without grades "+studentsNoGrade.size());
@@ -153,23 +140,8 @@ public class GradeService {
             return studentsNoGrade;
         }
 
-        /*public List<Student> rankStudentsBySubject(String subject)throws DAOException,BaseExceptionApp{
-            List<Grade> sujbectList = gradeDAO.findGradesBySubject(subject);
-            List<Student> studentList = studentDAO.findAllStudent();
-
-            Map<Integer,Student> mapallStudent = studentList.stream().collect(Collectors.toMap(Student::getId,s->s));
-            List<Integer> listidsSorted = sujbectList.stream().sorted(Comparator.comparing(Grade::getScore).reversed()).map(g->g.getStudentId()).toList();
-            List<Student> studentsrank = listidsSorted.stream().map(mapallStudent::get).filter(Objects::nonNull).toList();
-            //List<Student> studentHassubject = studentList.stream().filter(s->idslist.contains(s.getId())).toList();
-            logger.info("Ranked " + studentsrank.size() + " students for subject: " + subject);
-            studentsrank.forEach(s->logger.info(s.toString()));
-            return studentsrank;
-        }*/
 
         public List<Student> rankStudentsBySubject(String subject) throws DAOException, BaseExceptionApp {
-            /*if (subject == null || subject.isBlank()) {
-            throw new InvalidInputException("Subject cannot be empty",subject,null,null,INPUTYPE.STRING);
-            }*/
     
             List<Grade> subjectGrades = gradeDAO.findGradesBySubject(subject);
     
@@ -182,7 +154,6 @@ public class GradeService {
             Map<Integer, Student> studentMap = studentList.stream()
             .collect(Collectors.toMap(Student::getId, s -> s));
     
-            // Group by student, take highest score
             List<Student> rankedStudents = subjectGrades.stream()
             .collect(Collectors.groupingBy(
                 Grade::getStudentId,
@@ -200,7 +171,7 @@ public class GradeService {
         logger.info("Ranked " + rankedStudents.size() + " students for subject: " + subject);
         return rankedStudents;
 }
-        //=================bulk operation transactions.================================================
+
         public int bulkAddGrades(List<Grade> grades) throws DAOException,BaseExceptionApp{
             Connection conn = null;
             int rows =0;
@@ -226,7 +197,6 @@ public class GradeService {
                 logger.log(Level.SEVERE, "Transaction failed", e);
                 throw new DAOException("transsection faild", e);
             }finally {
-                 // 6. Reset autocommit and close
                 if (conn != null) {
                     try {
                         conn.setAutoCommit(true);
@@ -266,7 +236,6 @@ public class GradeService {
 
             logger.info("Transferred " + toGrades.size() + " grades from student " + fromStudentId + " to student " + toStudentId);
         }
-        //====================================Advanced Analytics (Optional - Hard Mode)===============================
         public Map<String, String> getGradeDistribution()throws DAOException,BaseExceptionApp{
             List<Grade> listAllGrades = gradeDAO.findAllGrade();
             Set<String> subjectset = listAllGrades.stream().map(Grade::getSubject).collect(Collectors.toSet());
@@ -278,7 +247,6 @@ public class GradeService {
             Map<String,Long> fMap = listAllGrades.stream().filter(g->g.getScore() <50).collect(Collectors.groupingBy(Grade::getSubject,Collectors.counting()));
             Map<String,String> subjectMapDistro = subjectset.stream().collect(Collectors.toMap(s->s,s->String.format("{A (100-90): %d,B (89,80): %d,C (79,70): %d,d (69,60): %d,e (59,50): %d,f (<50) :%d}",aMap.getOrDefault(s,0L),bMap.getOrDefault(s,0L),cMap.getOrDefault(s,0L),dMap.getOrDefault(s,0L),eMap.getOrDefault(s,0L),fMap.getOrDefault(s,0L))));
             return subjectMapDistro;
-            //Map<String,String> mapbysubjectRanges = listAllGrades.stream().collect(Collectors.groupingBy(Grade::getSubject));
         }
         public List<Student> getStudentsBelowverage()throws DAOException,BaseExceptionApp{
             List<Student> studentsList = studentDAO.findAllStudent();
@@ -334,8 +302,6 @@ public class GradeService {
                     Grade::getStudentId,
                 Collectors.averagingDouble(Grade::getScore)
                 )); 
-            /*Map<Integer,Student> mapStudent = studentsList.stream().collect(Collectors.toMap(s->s.getId(),s->s));
-            List<Student> BlowAvergeList = gradesList.stream().filter(s->s.getScore() < overallAverage).map(Grade::getStudentId).map(s->mapStudent.get(s)).filter(Objects::nonNull).toList();*/
            Map<Integer, Student> studentMap = studentsList.stream()
             .collect(Collectors.toMap(Student::getId, s -> s));
     
@@ -392,14 +358,6 @@ public class GradeService {
                 .filter(entry -> entry.getValue() > 0) 
                 .sorted(Map.Entry.<Integer, Double>comparingByValue().reversed()) 
                 .limit(limit).map(entry -> mapallstudent.get(entry.getKey())).filter(Objects::nonNull).collect(Collectors.toList());
-            /*List<Student> studens = gradesList.stream().collect(Collectors.groupingBy(Grade::getStudentId,Collectors.collectingAndThen(
-                Collectors.toList(),s->{if(s.size() <2){ return 0.0;}
-                s.sort(Comparator.comparing(Grade::getExamDate));
-                Grade firstGrade = s.getFirst();
-                Grade lastGrade = s.getLast();
-                return lastGrade.getScore() - firstGrade.getScore();
-            })))
-            .entrySet().stream().filter(s->s.getValue()>0).sorted(Map.Entry.<Integer,Double>comparingByValue().reversed()).map(s->mapstudent.get(s.getKey())).filter(Objects::nonNull).limit(limit).toList();*/
             return studens;
         }
 }

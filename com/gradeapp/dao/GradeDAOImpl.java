@@ -192,27 +192,11 @@ public class GradeDAOImpl implements GradeDAO {
         String sql = "SELECT * FROM grades WHERE subject = ? AND idstudent = ?";
         StringCheekValidation(subject);
         idCheekvalidation(studentId);
-        /*Integer idgrade = null;
-        Integer idstudent = null;
-        String subject = null;
-        Double score = null;
-        LocalDateTime examDate = null;
-        Grade tempGrade = null; */
-        
         try (Connection conn = DBConnection.getConnection();PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, subject);
             pstmt.setInt(2, studentId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    /* idgrade = rs.getInt("id");
-                    subject = rs.getString("subject");
-                    score = rs.getDouble("score");
-                    Timestamp tm = rs.getTimestamp("exam_date");
-                    examDate = (tm != null)?tm.toLocalDateTime(): null;
-                    idstudent = rs.getInt("idstudent");
-                    tempGrade = new Grade(idgrade,idstudent, subject,score);
-                    tempGrade.setExamDate(examDate);
-                    logger.info("retrive was completed successefully");*/
                     return Optional.of(extractGradeFromResultSet(rs));
                 }   
             }
@@ -227,23 +211,8 @@ public class GradeDAOImpl implements GradeDAO {
     public List<Grade> findAllGrade() throws DAOException, BaseExceptionApp {
         String sql = "SELECT * FROM grades";
         List<Grade> listtemp = new ArrayList<>();
-        /*Integer idgrade = null;
-        Integer idstudent = null;
-        String subject = null;
-        Double score = null;
-        LocalDateTime examDate = null;
-        Grade tempGrade = null; */
-        
         try (Connection conn = DBConnection.getConnection();PreparedStatement pstmt = conn.prepareStatement(sql);ResultSet rs = pstmt.executeQuery() ) {
-            while (rs.next()) {
-                /*idgrade = rs.getInt("id");
-                idstudent = rs.getInt("idstudent");
-                subject = rs.getString("subject");
-                score = rs.getDouble("score");
-                Timestamp tm = rs.getTimestamp("exam_date");
-                examDate = (tm !=null)?tm.toLocalDateTime():null;
-                tempGrade = new Grade(idgrade,idstudent, subject, score);
-                tempGrade.setExamDate(examDate); */  
+            while (rs.next()) { 
                 listtemp.add(extractGradeFromResultSet(rs));
             }
             return listtemp;
@@ -254,7 +223,7 @@ public class GradeDAOImpl implements GradeDAO {
     }
     private Grade extractGradeFromResultSet(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
-        int studentId = rs.getInt("idstudent"); // ✅ Correct column name
+        int studentId = rs.getInt("idstudent");
         String subject = rs.getString("subject");
         double score = rs.getDouble("score");
         Timestamp timestamp = rs.getTimestamp("exam_date");

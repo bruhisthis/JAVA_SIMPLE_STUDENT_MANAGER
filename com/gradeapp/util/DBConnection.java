@@ -13,27 +13,24 @@ import java.util.Properties;
 public class DBConnection {
     private static final Logger logger = AppLogger.getLogger(DBConnection.class);
 
-    private static String URL;// = "jdbc:postgresql://localhost:5432/gradedb";
-    private static String USERNAME ;//= "postgres";
+    private static String URL;
+    private static String USERNAME ;
     private static String PASSWORD;
-    private static String DRIVER;// = "hatier1009";
+    private static String DRIVER;
     static {
         loadProperties();
     }
-    //private static Connection connection;
 
-    private DBConnection() {} // private constructor
+    private DBConnection() {}
 
     private static void loadProperties() {
         Properties props = new Properties();
         
-        // Try to load from file system first (project root)
         try (InputStream input = new FileInputStream("db.properties")) {
             props.load(input);
             logger.info("Loaded database configuration from db.properties");
             
         } catch (IOException e) {
-            // If file not found, try classpath (inside JAR)
             try (InputStream input = DBConnection.class.getClassLoader()
                     .getResourceAsStream("db.properties")) {
                 
@@ -41,7 +38,6 @@ public class DBConnection {
                     props.load(input);
                     logger.info("Loaded database configuration from classpath");
                 } else {
-                    // Use default values
                     logger.warning("db.properties not found! Using default configuration.");
                     setDefaultProperties(props);
                 }
@@ -52,7 +48,6 @@ public class DBConnection {
             }
         }
         
-        // Extract properties
         URL = props.getProperty("db.url", "jdbc:postgresql://localhost:5432/gradedb");
         USERNAME = props.getProperty("db.username", "postgres");
         PASSWORD = props.getProperty("db.password", "hatier1009");

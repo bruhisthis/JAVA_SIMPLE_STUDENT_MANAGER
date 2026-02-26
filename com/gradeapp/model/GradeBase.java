@@ -9,7 +9,7 @@ public class GradeBase {
     protected Double score;
     protected LocalDateTime examDate;
     public GradeBase(Integer id,String subject,double score){
-        examDate = LocalDateTime.now();//if is created frist time in ram.
+        examDate = LocalDateTime.now();
         this.id = id;
         this.score = score;
         this.subject = subject;

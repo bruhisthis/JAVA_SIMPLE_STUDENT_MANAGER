@@ -14,10 +14,9 @@ public class Student {
         if (email.contains("@gmail.com") && !email.isEmpty()) {
             this.email = email;
         }else{
-            this.email = "no email";//must but static final;
+            this.email = "no email";
         }
         enrollmentDate = LocalDateTime.now();
-        //logge the error of invalid email
     }
     public String getEmail() {
         return email;

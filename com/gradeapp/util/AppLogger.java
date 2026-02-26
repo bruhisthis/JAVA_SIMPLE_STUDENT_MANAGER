@@ -26,32 +26,26 @@ public class AppLogger {
     }
     private static void setupLogging() {
         try {
-            // Create logs directory if not exists
             java.io.File logDir = new java.io.File(LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdirs();
             }
             
-            // Get root logger
             Logger rootLogger = Logger.getLogger("");
             
-            // Remove default console handler
             Handler[] handlers = rootLogger.getHandlers();
             for (Handler handler : handlers) {
                 rootLogger.removeHandler(handler);
             }
             
-            // ===== FILE HANDLER =====
-            // Creates rotating log files: app_0.log, app_1.log, etc.
-            // Max 5MB per file, keep 5 files
             FileHandler fileHandler = new FileHandler(
                 LOG_FILE_PATTERN,
-                5 * 1024 * 1024,  // 5MB per file
-                5,                // Keep 5 files
-                true              // Append mode
+                5 * 1024 * 1024,  
+                5,          
+                true            
             );
             
-            // Custom formatter for file logs
+            
             fileHandler.setFormatter(new SimpleFormatter() {
                 private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 
@@ -71,8 +65,6 @@ public class AppLogger {
             fileHandler.setLevel(Level.ALL);
             rootLogger.addHandler(fileHandler);
             
-            // ===== CONSOLE HANDLER (ERRORS ONLY) =====
-            // Show only SEVERE and WARNING in console
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.WARNING);
             consoleHandler.setFormatter(new SimpleFormatter() {
@@ -87,10 +79,8 @@ public class AppLogger {
             });
             rootLogger.addHandler(consoleHandler);
             
-            // Set root logger level
             rootLogger.setLevel(Level.ALL);
             
-            // Log startup message
             Logger logger = Logger.getLogger(AppLogger.class.getName());
             logger.info("============================================");
             logger.info("  Logging System Initialized");
