@@ -1,0 +1,21 @@
+#compliled java class files
+.class
+# log files
+.log
+#batch files
+.bat
+#sql files 
+.sql
+cat > .gitignore << EOF
+#compliled java class files
+.class
+# log files
+.log
+#batch files
+.bat
+#sql files 
+.sql
+#texts files
+.txt
+#properties files
+.properties

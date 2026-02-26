@@ -1,0 +1,1 @@
+SELECT * FROM grades;SELECT * FROM students;
